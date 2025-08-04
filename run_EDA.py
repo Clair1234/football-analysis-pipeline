@@ -13,7 +13,7 @@ FIELD_WIDTH = 68    # meters
 def collect_data(folder):
     # Get list of files
     list_files = glob.glob(f"{folder}/*.parquet")
-    list_files = random.sample(list_files, 100)
+    list_files = random.sample(list_files, min(len(list_files), 100))
 
     data = []
 
@@ -206,10 +206,10 @@ def plot_ball_position_heatmap(df, strategy=None):
     
     if strategy:
         plt.title(f'Ball Position Heatmap for strategy {strategy}')
-        plt.savefig(f"./EDA_plot/Heatmap_ball_position_{strategy}.png")
+        plt.savefig(f"./analysis/EDA/Heatmap_ball_position_{strategy}.png")
     else:
         plt.title('Ball Position Heatmap')
-        plt.savefig("./EDA_plot/Heatmap_ball_position.png")
+        plt.savefig("./analysis/EDA/Heatmap_ball_position.png")
     plt.close()
         
 def plot_centroid_time_series(data, strategy=None):
@@ -219,10 +219,10 @@ def plot_centroid_time_series(data, strategy=None):
     plt.legend()
     if strategy:
         plt.title(f"Centroid X time serie for strategy: {strategy}")
-        plt.savefig(f"./EDA_plot/X_centroid_{strategy}.png")
+        plt.savefig(f"./analysis/EDA/X_centroid_{strategy}.png")
     else:
         plt.title(f"Centroid X time serie")
-        plt.savefig("./EDA_plot/X_centroid.png")
+        plt.savefig("./analysis/EDA/X_centroid.png")
     plt.close()
     sns.lineplot(data=data, x="frame", y="centroid_y_right_team", label='Y centroid right', color='red')
     sns.lineplot(data=data, x="frame", y="centroid_y_left_team", label='Y centroid left', color='blue')
@@ -230,10 +230,10 @@ def plot_centroid_time_series(data, strategy=None):
     plt.legend()
     if strategy:
         plt.title(f"Centroid Y time serie for strategy: {strategy}")
-        plt.savefig(f"./EDA_plot/Y_centroid_{strategy}.png")
+        plt.savefig(f"./analysis/EDA/Y_centroid_{strategy}.png")
     else:
         plt.title(f"Centroid X time serie")
-        plt.savefig("./EDA_plot/Y_centroid.png")
+        plt.savefig("./analysis/EDA/Y_centroid.png")
     plt.close()
         
 def compute_velocity_distribution(df, plot_title, filename):

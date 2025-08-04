@@ -529,8 +529,12 @@ class SoccerPredictionDataset:
     def load_data_limited(self, folder_path, max_files=100):
         """Load limited parquet files more efficiently using Polars"""
         
+        list_files = glob.glob(os.path.join(folder_path, "*.parquet"))
+        
+        updated_max = min(len(list_files), max_files)
+        
         # Get parquet files directly
-        parquet_files = glob.glob(os.path.join(folder_path, "*.parquet"))[:max_files]
+        parquet_files = list_files[:updated_max]
         print(f"Loading {len(parquet_files)} files with Polars")
         
         # Use Polars for more memory efficient loading
