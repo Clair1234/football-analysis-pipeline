@@ -55,12 +55,18 @@ def setup_inference_data(data_path: str, seq_len: int = 100, max_files: int = No
     
     return dataset
 
-def run_inference_on_sequences(model, dataset, device='cpu', batch_size=16):
+def run_inference_on_sequences(model, dataset, 
+                               device='cpu', 
+                               batch_size=16, 
+                               filter_sequences=False):
     """
     Run inference on all sequences in the dataset
     """
     # Create sequences
-    X_player, X_ball, y_player, y_ball = dataset.create_sequences()
+    if filter_sequences:
+        X_player, X_ball, y_player, y_ball = dataset.create_sequences_filtered()
+    else:
+        X_player, X_ball, y_player, y_ball = dataset.create_sequences()
     
     # Create PyTorch dataset
     inference_dataset = SoccerSequenceDataset(X_player, X_ball, y_player, y_ball)
@@ -256,10 +262,10 @@ def main_inference_pipeline(): #need to fix that
     
     # 3. Run inference on all sequences
     print("Running inference on all sequences...")
-    # results = run_inference_on_sequences(model, dataset, device, batch_size=16)
+    results = run_inference_on_sequences(model, dataset, device, batch_size=16)
     
     # 4. Evaluate results (using CPU-only version to avoid device issues)
     print("\nEvaluation Results:")
-    # metrics = evaluate_predictions_cpu_only(results, dataset)
+    metrics = evaluate_predictions_cpu_only(results, dataset)
 
     return model, dataset, None #results

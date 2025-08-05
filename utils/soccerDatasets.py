@@ -1,12 +1,10 @@
-import numpy as np
-import torch
-from sklearn.preprocessing import MinMaxScaler, StandardScaler
 import gc
-import polars as pl
-# PyTorch Dataset wrapper
-from torch.utils.data import Dataset, TensorDataset
-import os
 import glob
+import numpy as np
+import polars as pl
+from sklearn.preprocessing import MinMaxScaler, StandardScaler
+import torch
+from torch.utils.data import Dataset
 
 class SoccerPredictionDataset:
     def __init__(self, seq_len=100, forecast_horizon=10, max_position_jump=10.0, 
@@ -33,7 +31,7 @@ class SoccerPredictionDataset:
         
         np.set_printoptions(precision=4)
 
-    def detect_discontinuities(self, positions, velocities=None, ball_positions=None):
+    def detect_discontinuities(self, positions, velocities=None, ball_positions=None): #used
         """
         Detect discontinuities in player positions and ball positions
         
@@ -100,7 +98,7 @@ class SoccerPredictionDataset:
         
         return valid_mask
 
-    def _detect_formation_resets(self, positions, valid_mask):
+    def _detect_formation_resets(self, positions, valid_mask): #used
         """
         Detect formation resets by looking for sudden changes in team shape/spread
         """
@@ -134,11 +132,11 @@ class SoccerPredictionDataset:
             reset_timesteps = np.where(formation_resets)[0] + 1
             valid_mask[reset_timesteps] = False
             
-            print(f"Found {np.sum(formation_resets)} formation resets")
+            # print(f"Found {np.sum(formation_resets)} formation resets")
         
         return valid_mask
 
-    def smooth_positions(self, positions, valid_mask, window_size=3):
+    def smooth_positions(self, positions, valid_mask, window_size=3): #used
         """
         Apply smoothing to positions, but only within valid segments
         """
@@ -160,7 +158,7 @@ class SoccerPredictionDataset:
         
         return smoothed_positions
 
-    def _find_continuous_segments(self, valid_mask):
+    def _find_continuous_segments(self, valid_mask): #used
         """Find continuous segments of valid data"""
         segments = []
         start = None
@@ -178,7 +176,7 @@ class SoccerPredictionDataset:
         
         return segments
     
-    def process_features(self):
+    def process_features(self): #used
         """Process features with memory optimization and discontinuity detection"""
         # Define player columns
         players = []
@@ -243,7 +241,7 @@ class SoccerPredictionDataset:
         relevant_cols.extend(available_tactical_cols)
         
         # Select and optimize data types with Polars
-        print("Selecting and optimizing data types...")
+        # print("Selecting and optimizing data types...")
         
         # Create dtype mapping for memory optimization
         dtype_mapping = {}
@@ -272,8 +270,8 @@ class SoccerPredictionDataset:
         time_steps = selected_data.height
         num_players = 22
         
-        print(f"Processing {time_steps} time steps for {num_players} players")
-        print(f"Available tactical features: {available_tactical_cols}")
+        # print(f"Processing {time_steps} time steps for {num_players} players")
+        # print(f"Available tactical features: {available_tactical_cols}")
         
         # Process data in chunks to reduce memory usage
         chunk_size = min(10000, time_steps)  # Process 10k rows at a time
@@ -367,8 +365,9 @@ class SoccerPredictionDataset:
         print(f"Valid timesteps: {np.sum(self.valid_indices)}/{len(self.valid_indices)} ({100*np.sum(self.valid_indices)/len(self.valid_indices):.1f}%)")
         print("=== Discontinuity Detection Complete ===\n")
 
-    def create_sequences_filtered(self):
+    def create_sequences_filtered(self): #used
         """Create sequences while filtering out discontinuities"""
+        print("create_sequences_filtered used")
         print("Creating sequences with discontinuity filtering...")
         
         if self.valid_indices is None:
@@ -452,22 +451,6 @@ class SoccerPredictionDataset:
         
         return X_player, X_ball, y_player, y_ball
 
-    def get_pytorch_dataset_filtered(self):
-        """Get PyTorch dataset with discontinuity filtering"""
-        X_player, X_ball, y_player, y_ball = self.create_sequences_filtered()
-        
-        # Convert to PyTorch tensors
-        X_player_tensor = torch.from_numpy(X_player)
-        X_ball_tensor = torch.from_numpy(X_ball)
-        y_player_tensor = torch.from_numpy(y_player)
-        y_ball_tensor = torch.from_numpy(y_ball)
-        
-        # Clean up
-        del X_player, X_ball, y_player, y_ball
-        gc.collect()
-        
-        return TensorDataset(X_player_tensor, X_ball_tensor, y_player_tensor, y_ball_tensor)
-
     def analyze_discontinuities(self):
         """Analyze and report discontinuities in the data"""
         if self.valid_indices is None:
@@ -505,7 +488,7 @@ class SoccerPredictionDataset:
         self.data.printSchema()
 
     def load_specific(self, parquet_files):
-        """Load limited parquet files more efficiently using Polars"""        
+        """Load limited parquet files more efficiently using Polars""" 
         # Use Polars for more memory efficient loading
         if len(parquet_files) == 1:
             self.data = pl.read_parquet(parquet_files[0])
@@ -526,15 +509,11 @@ class SoccerPredictionDataset:
         #print("Data schema:")
         #print(self.data.dtypes)
         
-    def load_data_limited(self, folder_path, max_files=100):
+    def load_data_limited(self, folder_path, max_files=100): #used
         """Load limited parquet files more efficiently using Polars"""
         
-        list_files = glob.glob(os.path.join(folder_path, "*.parquet"))
-        
-        updated_max = min(len(list_files), max_files)
-        
         # Get parquet files directly
-        parquet_files = list_files[:updated_max]
+        parquet_files = glob.glob(os.path.join(folder_path, "*.parquet"))[:max_files]
         print(f"Loading {len(parquet_files)} files with Polars")
         
         # Use Polars for more memory efficient loading
@@ -557,7 +536,7 @@ class SoccerPredictionDataset:
         print("Data schema:")
         print(self.data.dtypes)
 
-    def _process_chunk(self, pdf, available_tactical_cols, chunk_offset, velocity_cols, distance_cols, zone_cols):
+    def _process_chunk(self, pdf, available_tactical_cols, chunk_offset, velocity_cols, distance_cols, zone_cols): #used
         """Process a chunk of data - helper function for process_features"""
         time_steps = len(pdf)
         
@@ -694,7 +673,7 @@ class SoccerPredictionDataset:
         
         return chunk_positions, chunk_velocities, chunk_distances, chunk_zones, chunk_tactical, chunk_ball
 
-    def _scale_features(self):
+    def _scale_features(self): #used
         """Scale features with memory optimization"""
         print("Scaling features...")
         
@@ -789,7 +768,7 @@ class SoccerPredictionDataset:
         gc.collect()
         print("Feature scaling completed")
 
-    def create_sequences(self):
+    def create_sequences(self): #used
         """Create sequences with memory optimization"""
         print("Creating sequences with memory optimization...")
         
@@ -851,22 +830,6 @@ class SoccerPredictionDataset:
         
         return X_player, X_ball, y_player, y_ball
 
-    def get_pytorch_dataset(self):
-        """Convert to PyTorch dataset with memory optimization"""
-        X_player, X_ball, y_player, y_ball = self.create_sequences()
-        
-        # Convert to PyTorch tensors with appropriate dtypes
-        X_player_tensor = torch.from_numpy(X_player)  # Already float32
-        X_ball_tensor = torch.from_numpy(X_ball)      # Already float32  
-        y_player_tensor = torch.from_numpy(y_player)  # Already float32
-        y_ball_tensor = torch.from_numpy(y_ball)      # Already float32
-        
-        # Clean up numpy arrays
-        del X_player, X_ball, y_player, y_ball
-        gc.collect()
-        
-        return TensorDataset(X_player_tensor, X_ball_tensor, y_player_tensor, y_ball_tensor)
-
     def inverse_transform_predictions(self, predictions):
         """
         Inverse transform predictions back to original scale
@@ -877,6 +840,7 @@ class SoccerPredictionDataset:
         Returns:
             Unscaled predictions in same shape
         """
+        print("inverse_transform_predictions used")
         original_shape = predictions.shape
         
         if len(predictions.shape) == 4:  # Player predictions
@@ -899,6 +863,7 @@ class SoccerPredictionDataset:
         Returns:
             unnormalized predictions (torch.Tensor)
         """
+        print("inverse_transform_predictions_tensor used")
         if kind == "position":
             scaler = self.position_scaler_torch
             x_unscaled = x * (scaler["max"] - scaler["min"]) + scaler["min"]
@@ -910,8 +875,7 @@ class SoccerPredictionDataset:
         
         return x_unscaled
 
-
-    def get_feature_info(self):
+    def get_feature_info(self): #used
         """
         Get information about the features in the player states
         Not ideal that this is hard coded but it does the job
@@ -953,212 +917,8 @@ class SoccerPredictionDataset:
         }
         return feature_info
 
-    def create_sequences_filtered_with_team_ids(self):
-        """Create sequences while filtering out discontinuities and include team IDs"""
-        print("Creating sequences with discontinuity filtering and team IDs...")
-        
-        if self.valid_indices is None:
-            print("Warning: No discontinuity detection performed. Using all data.")
-            return self.create_sequences_with_team_ids()
-        
-        # Find continuous segments of valid data
-        valid_segments = self._find_continuous_segments(self.valid_indices)
-        
-        print(f"Found {len(valid_segments)} continuous segments")
-        for i, (start, end) in enumerate(valid_segments):
-            print(f"  Segment {i+1}: timesteps {start}-{end} (length: {end-start})")
-        
-        # Collect sequences from each valid segment
-        all_X_player = []
-        all_X_ball = []
-        all_y_player = []
-        all_y_ball = []
-        #all_team_ids = []
-        
-        # Prepare combined player states
-        player_zones_expanded = self.player_zones.astype(np.float32)[..., np.newaxis]
-        player_distances_expanded = self.player_distances[..., np.newaxis]
-        
-        player_states = np.concatenate([
-            self.player_positions,
-            self.player_velocities,
-            player_distances_expanded,
-            player_zones_expanded,
-            self.player_tactical_features
-        ], axis=2, dtype=np.float32)
-        
-        # Create team IDs: first 11 players are team 0, next 11 are team 1
-        #team_ids = np.array([0] * 11 + [1] * 11, dtype=np.int64)  # Shape: (22,)
-        
-        total_sequences = 0
-        
-        for start, end in valid_segments:
-            segment_length = end - start
-            
-            # Check if segment is long enough for sequences
-            if segment_length < self.seq_len + 1:
-                print(f"Skipping segment {start}-{end}: too short ({segment_length} < {self.seq_len + 1})")
-                continue
-            
-            # Extract segment data
-            segment_player_states = player_states[start:end]
-            segment_ball_states = self.ball_states[start:end]
-            segment_player_positions = self.player_positions[start:end]
-            
-            # Create sequences within this segment
-            num_sequences = segment_length - self.seq_len
-            
-            for i in range(num_sequences):
-                seq_start = i
-                input_end = seq_start + self.seq_len
-                target_end = input_end + 1
-                
-                X_player_seq = segment_player_states[seq_start:input_end]
-                X_ball_seq = segment_ball_states[seq_start:input_end]
-                y_player_seq = segment_player_positions[input_end:target_end]
-                y_ball_seq = segment_ball_states[input_end:target_end, :2]
-                
-                all_X_player.append(X_player_seq)
-                all_X_ball.append(X_ball_seq)
-                all_y_player.append(y_player_seq)
-                all_y_ball.append(y_ball_seq)
-                #all_team_ids.append(team_ids)  # Same team IDs for all sequences
-                
-                total_sequences += 1
-        
-        if total_sequences == 0:
-            raise ValueError("No valid sequences found after filtering discontinuities")
-        
-        # Convert to numpy arrays
-        X_player = np.array(all_X_player, dtype=np.float32)
-        X_ball = np.array(all_X_ball, dtype=np.float32)
-        y_player = np.array(all_y_player, dtype=np.float32)
-        y_ball = np.array(all_y_ball, dtype=np.float32)
-        #team_ids_array = np.array(all_team_ids, dtype=np.int64)  # Shape: (num_sequences, 22)
-        
-        print(f"Created {total_sequences} filtered sequences:")
-        print(f"  X_player: {X_player.shape}")
-        print(f"  X_ball: {X_ball.shape}")
-        print(f"  y_player: {y_player.shape}")
-        print(f"  y_ball: {y_ball.shape}")
-        #print(f"  team_ids: {team_ids_array.shape}")
-        
-        return X_player, X_ball, y_player, y_ball, #team_ids_array
-
-    def create_sequences_with_team_ids(self):
-        """Create sequences with memory optimization and team IDs"""
-        print("Creating sequences with memory optimization and team IDs...")
-        
-        # Convert zones to expanded format efficiently
-        player_zones_expanded = self.player_zones.astype(np.float32)[..., np.newaxis]
-        player_distances_expanded = self.player_distances[..., np.newaxis]
-        
-        # Combine player states with memory-efficient concatenation
-        player_states = np.concatenate([
-            self.player_positions,          # (time_steps, 22, 2)
-            self.player_velocities,         # (time_steps, 22, 2)  
-            player_distances_expanded,      # (time_steps, 22, 1)
-            player_zones_expanded,          # (time_steps, 22, 1)
-            self.player_tactical_features   # (time_steps, 22, 16)
-        ], axis=2, dtype=np.float32)  # (time_steps, 22, 22)
-        
-        # Create team IDs: first 11 players are team 0, next 11 are team 1
-        #team_ids = np.array([0] * 11 + [1] * 11, dtype=np.int64)  # Shape: (22,)
-        
-        # Clean up intermediate arrays
-        del player_zones_expanded, player_distances_expanded
-        gc.collect()
-        
-        total_steps = player_states.shape[0]
-        num_sequences = total_steps - self.seq_len
-        
-        if num_sequences <= 0:
-            raise ValueError(f"Not enough data for sequences. Need at least {self.seq_len + 1} steps, got {total_steps}")
-        
-        print(f"Creating {num_sequences} sequences...")
-        
-        # Pre-allocate arrays with correct dtypes
-        X_player = np.empty((num_sequences, self.seq_len, 22, 22), dtype=np.float32)
-        X_ball = np.empty((num_sequences, self.seq_len, 4), dtype=np.float32)
-        y_player = np.empty((num_sequences, 1, 22, 2), dtype=np.float32)
-        y_ball = np.empty((num_sequences, 1, 2), dtype=np.float32)
-        #team_ids_array = np.tile(team_ids, (num_sequences, 1))  # Shape: (num_sequences, 22)
-        
-        # Fill arrays efficiently
-        for i in range(num_sequences):
-            start = i
-            input_end = start + self.seq_len
-            target_end = input_end + 1
-            
-            X_player[i] = player_states[start:input_end]
-            X_ball[i] = self.ball_states[start:input_end]
-            y_player[i] = self.player_positions[input_end:target_end]
-            y_ball[i] = self.ball_states[input_end:target_end, :2]
-            
-            # Periodic garbage collection for large datasets
-            if i % 1000 == 0 and i > 0:
-                gc.collect()
-        
-        # Clean up player_states
-        del player_states
-        gc.collect()
-        
-        print(f"Created sequences:")
-        print(f"  X_player: {X_player.shape} (dtype: {X_player.dtype})")
-        print(f"  X_ball: {X_ball.shape} (dtype: {X_ball.dtype})")
-        print(f"  y_player: {y_player.shape} (dtype: {y_player.dtype})")
-        print(f"  y_ball: {y_ball.shape} (dtype: {y_ball.dtype})")
-        #print(f"  team_ids: {team_ids_array.shape} (dtype: {team_ids_array.dtype})")
-        
-        return X_player, X_ball, y_player, y_ball, # team_ids_array
-
-    def get_pytorch_dataset_with_team_ids(self):
-        """Get PyTorch dataset with team IDs and discontinuity filtering"""
-        if self.valid_indices is not None:
-            #X_player, X_ball, y_player, y_ball, team_ids = self.create_sequences_filtered_with_team_ids()
-            X_player, X_ball, y_player, y_ball = self.create_sequences_filtered_with_team_ids()
-        else:
-            #X_player, X_ball, y_player, y_ball, team_ids = self.create_sequences_with_team_ids()
-            X_player, X_ball, y_player, y_ball = self.create_sequences_with_team_ids()
-        
-        # Convert to PyTorch tensors
-        X_player_tensor = torch.from_numpy(X_player)
-        X_ball_tensor = torch.from_numpy(X_ball)
-        y_player_tensor = torch.from_numpy(y_player)
-        y_ball_tensor = torch.from_numpy(y_ball)
-        #team_ids_tensor = torch.from_numpy(team_ids)
-        
-        # Clean up
-        del X_player, X_ball, y_player, y_ball, #team_ids
-        gc.collect()
-        
-        #return TensorDatasetWithTeamIds(X_player_tensor, X_ball_tensor, y_player_tensor, y_ball_tensor, team_ids_tensor)
-        return TensorDatasetWithTeamIds(X_player_tensor, X_ball_tensor, y_player_tensor, y_ball_tensor)
-
-class TensorDatasetWithTeamIds(Dataset):
-    #def __init__(self, X_player, X_ball, y_player, y_ball, team_ids):
-    def __init__(self, X_player, X_ball, y_player, y_ball):
-        self.X_player = X_player
-        self.X_ball = X_ball
-        self.y_player = y_player
-        self.y_ball = y_ball
-        #self.team_ids = team_ids
-    
-    def __len__(self):
-        return len(self.X_player)
-    
-    def __getitem__(self, idx):
-        return {
-            'player_states': self.X_player[idx],     # (seq_len, 22, 22)
-            'ball_states': self.X_ball[idx],         # (seq_len, 4)
-            'target_players': self.y_player[idx],    # (1, 22, 2)
-            'target_ball': self.y_ball[idx],         # (1, 2)
-            #'team_ids': self.team_ids[idx]           # (22,) - team IDs for each player
-        }
-
-
 class SoccerSequenceDataset(Dataset):
-    """Enhanced version of SoccerSequenceDataset that includes team IDs"""
+    """Enhanced version of SoccerSequenceDataset """
     def __init__(self, X_player, X_ball, y_player, y_ball, team_ids=None):
         self.X_player = torch.FloatTensor(X_player)
         self.X_ball = torch.FloatTensor(X_ball)
@@ -1174,5 +934,4 @@ class SoccerSequenceDataset(Dataset):
             'ball_states': self.X_ball[idx],         # (seq_len, 4)
             'target_players': self.y_player[idx],    # (forecast_horizon, 22, 2)
             'target_ball': self.y_ball[idx],         # (forecast_horizon, 2)
-            #'team_ids': self.team_ids[idx]           # (22,) - team IDs for each player
         }
