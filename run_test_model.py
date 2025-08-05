@@ -5,7 +5,7 @@ from utils import load_trained_model, \
                     evaluate_predictions_cpu_only
 
 
-def main(): #need to fix that
+def main():
     """
     Complete inference pipeline matching your training setup
     """
