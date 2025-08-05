@@ -16,8 +16,8 @@ def main(): #need to fix that
     model = load_trained_model(model_path, device)
     
     # 2. Setup inference data (same as training)
-    data_path = './data/processed'  
-    dataset = setup_inference_data(data_path, seq_len=100, max_files=2)
+    data_path = './data/processed/testing'  
+    dataset = setup_inference_data(data_path, seq_len=100, max_files=100)
     
     # 3. Run inference on all sequences
     print("Running inference on all sequences...")
