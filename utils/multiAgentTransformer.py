@@ -12,6 +12,7 @@ from sklearn.metrics import mean_squared_error, mean_absolute_error
 from itertools import islice
 import gc
 import random
+import os
 
 class PositionalEncoding(nn.Module):
     """Add positional encoding to transformer inputs"""
@@ -777,19 +778,20 @@ class SoccerTrainer:
                         print(f"Attention weights shape: {attention_weights.shape}")
                         
                         try:
+                            os.makedirs("analysis/visualisation", exist_ok=True)
                             # Plot attention heatmap
                             self.visualizer.plot_attention_heatmap(
                                 attention_weights, 
                                 layer_idx=-1, 
                                 head_idx=0,
-                                save_path=f'attention_heatmap_sample_{i+1}.png'
+                                save_path=f'analysis/visualisation/attention_heatmap_sample_{i+1}.png'
                             )
                             
                             # Plot ball attention
                             self.visualizer.plot_agent_attention_summary(
                                 attention_weights,
                                 agent_idx=22,  # Ball
-                                save_path=f'ball_attention_sample_{i+1}.png'
+                                save_path=f'analysis/visualisation/ball_attention_sample_{i+1}.png'
                             )
                             
                             # Plot temporal attention (ball to first player)
@@ -797,7 +799,7 @@ class SoccerTrainer:
                                 attention_weights,
                                 from_agent=22,  # Ball
                                 to_agent=0,     # First player
-                                save_path=f'temporal_attention_sample_{i+1}.png'
+                                save_path=f'analysis/visualisation/temporal_attention_sample_{i+1}.png'
                             )
                         except Exception as e:
                             print(f"Error in visualization: {e}")

@@ -23,7 +23,7 @@ device = 'cuda' if torch.cuda.is_available() else 'cpu'
 model = load_trained_model(model_path, device)
 # 0.2. Setup inference data (same as training)
 data_path = './data/processed/testing'  
-dataset = setup_inference_data(data_path, seq_len=100, max_files=100)
+dataset = setup_inference_data(data_path, seq_len=100, max_files=15)
     
 # Create a trainer just for visualization (you can also extract this functionality)
 trainer = SoccerTrainer(model, dataset)
@@ -131,7 +131,7 @@ print("9. Advanced explainability analysis...")
 # Try different attribution methods for comparison
 attribution_methods = ['integrated_gradients']
 feature_type = 'combined'
-folder = 'analysis'
+folder = 'analysis/interpretation'
 save_path = 'dimension_impact.txt'
 
 report = []

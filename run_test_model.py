@@ -17,7 +17,7 @@ def main():
     
     # 2. Setup inference data (same as training)
     data_path = './data/processed/testing'  
-    dataset = setup_inference_data(data_path, seq_len=100, max_files=100)
+    dataset = setup_inference_data(data_path, seq_len=100, max_files=15)
     
     # 3. Run inference on all sequences
     print("Running inference on all sequences...")
