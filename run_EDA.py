@@ -89,7 +89,7 @@ def compute_distance_distribution(df, plot_title, filename):
     plt.ylabel('Percentage of players (%)')
     plt.grid(axis='y', alpha=0.75)
     plt.legend()
-    plt.savefig(f"{filename}.png")
+    plt.savefig(f"./analysis/{filename}.png")
     plt.close()
 
 def pitch_control(df):
@@ -141,30 +141,6 @@ def normalize_to_meters(x, y):
     real_x = x * (FIELD_LENGTH)
     real_y = y * (FIELD_WIDTH)
     return real_x, real_y
-
-
-def plot_player_positions_heatmap_v0(df, strategy=None):
-    # Extract player positions for left and right teams
-    left_players = df.filter(like='left_')
-    right_players = df.filter(like='right_')
-    
-    # Reshape the data for heatmap
-    left_positions = left_players.values.reshape(-1, 2)  # Reshape to (n, 2) for x, y
-    right_positions = right_players.values.reshape(-1, 2)  # Reshape to (n, 2) for x, y
-    
-    # Create a heatmap for left players
-    plt.figure(figsize=(12, 6))
-    sns.kdeplot(x=left_positions[:, 0], y=left_positions[:, 1], fill=True, thresh=0, levels=100, cmap='Blues', alpha=0.5)
-    sns.kdeplot(x=right_positions[:, 0], y=right_positions[:, 1], fill=True, thresh=0, levels=100, cmap='Reds', alpha=0.5)
-
-    if strategy:
-        plt.title('Player Positions Heatmap for strategy: {strategy}')
-    else:
-        plt.title('Player Positions Heatmap')
-    plt.xlabel('X Position')
-    plt.ylabel('Y Position')
-    plt.legend(['Left Team', 'Right Team'])
-    #plt.show()
     
 def plot_player_positions_heatmap(df, strategy=None):
     # Extract player positions for left and right teams
@@ -275,7 +251,7 @@ def compute_velocity_distribution(df, plot_title, filename):
     plt.grid(axis='y', alpha=0.75)
     
     plt.legend()
-    plt.savefig(f"{filename}.png")
+    plt.savefig(f"./analysis/{filename}.png")
     plt.close()
         
 if __name__ == "__main__":
