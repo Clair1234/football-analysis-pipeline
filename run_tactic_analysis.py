@@ -4,7 +4,7 @@ import numpy as np
 import torch
 from torch.utils.data import DataLoader
 
-from .utils import main_inference_pipeline
+from .utils import load_trained_model, setup_inference_data
 from .utils import SoccerTrainer
 from .utils import SoccerSequenceDataset
 from .utils import TacticalPatternAnalyzer   
@@ -17,7 +17,13 @@ EXTRACT_PER_TEAM=True
 # 0
 print("0. Setting up data and model...")
 # Run the complete inference pipeline
-model, dataset, results = main_inference_pipeline()
+# 0.1. Load the trained model
+model_path = "./models/best_soccer_model.pth"
+device = 'cuda' if torch.cuda.is_available() else 'cpu'
+model = load_trained_model(model_path, device)
+# 0.2. Setup inference data (same as training)
+data_path = './data/processed/testing'  
+dataset = setup_inference_data(data_path, seq_len=100, max_files=100)
     
 # Create a trainer just for visualization (you can also extract this functionality)
 trainer = SoccerTrainer(model, dataset)
