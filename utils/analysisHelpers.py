@@ -388,7 +388,7 @@ class TacticalPatternAnalyzer:
         
         return features_array
     
-    def find_optimal_clusters(self, features, feature_name, max_clusters=40): #used
+    def find_optimal_clusters(self, features, feature_name, max_clusters=40,folder: str = "analysis/visualisation"): #used
         """Find optimal number of clusters using multiple metrics"""
         if len(features) < 4:
             print(f"Too few samples ({len(features)}) for clustering analysis")
@@ -435,7 +435,8 @@ class TacticalPatternAnalyzer:
         axes[2].set_ylabel('Inertia')
         
         plt.tight_layout()
-        plt.savefig(f'cluster_metrics_{feature_name.replace(" ", "_")}.png', dpi=150, bbox_inches='tight')
+        os.makedirs(folder, exist_ok=True)
+        plt.savefig(f'{folder}/cluster_metrics_{feature_name.replace(" ", "_")}.png', dpi=150, bbox_inches='tight')
         plt.show()
         
         # Choose optimal k based on silhouette score
@@ -533,7 +534,7 @@ class TacticalPatternAnalyzer:
         self.clustering_results = results
         return results
     
-    def visualize_clustering_results(self, features, clustering_results, feature_name): #used
+    def visualize_clustering_results(self, features, clustering_results, feature_name,folder: str = "analysis/visualisation"): #used
         """Visualize clustering results using dimensionality reduction"""
         # Reduce dimensionality for visualization
         if features.shape[1] > 2:
@@ -571,7 +572,8 @@ class TacticalPatternAnalyzer:
             axes[1, i].set_ylabel('t-SNE 2')
         
         plt.tight_layout()
-        plt.savefig(f'clustering_visualization_{feature_name.replace(" ", "_")}.png', 
+        os.makedirs(folder, exist_ok=True)
+        plt.savefig(f'{folder}/clustering_visualization_{feature_name.replace(" ", "_")}.png', 
                    dpi=150, bbox_inches='tight')
         plt.show()
 
@@ -769,7 +771,7 @@ class TacticalPatternAnalyzer:
         
         return cluster_agent_patterns
     
-def generate_tactical_report(analyzer, folder='analysis', save_path='tactical_pattern_report.txt'): #here mght eep
+def generate_tactical_report(analyzer, folder='analysis/interpretation', save_path='tactical_pattern_report.txt'): #here mght eep
     """
     Generate a comprehensive tactical analysis report
     """
@@ -1481,7 +1483,7 @@ def extract_statistical_features(positions): #used
     return features
 
 
-def plot_improved_cluster_comparison(features, labels, top_features, n_clusters, team_name="", feature_type=""): #used
+def plot_improved_cluster_comparison(features, labels, top_features, n_clusters, team_name="", feature_type="", folder: str = "analysis/visualisation"): #used
     """Plot improved comparison with better statistical visualization"""
     
     n_features = min(len(top_features), 6)
@@ -1526,7 +1528,8 @@ def plot_improved_cluster_comparison(features, labels, top_features, n_clusters,
     
     plt.suptitle(f'Top Discriminative Features - {team_name}- {feature_type}', fontsize=16)
     plt.tight_layout()
-    plt.savefig(f'topdiscriminative_features_team_{team_name}_{feature_type}.png')
+    os.makedirs(folder, exist_ok=True)
+    plt.savefig(f'{folder}/topdiscriminative_features_team_{team_name}_{feature_type}.png')
     plt.show()
 
 
@@ -2376,7 +2379,7 @@ def analyze_cluster_differences_manual(clustering_results, metadata, layer='laye
                                      feature_type='combined', algorithm='kmeans', 
                                      team_ids=None, sample_indices=None, transformer_features=None,
                                       save_path="cluster_difference_analysis.txt",
-                                      folder="analysis",
+                                      folder="analysis/interpretation",
                                       extract_per_team: bool =True): #used
     """
     Manual deep-dive analysis to understand what makes clusters different.
@@ -2496,7 +2499,7 @@ def analyze_cluster_differences_manual(clustering_results, metadata, layer='laye
     return transformer_features, cluster_examples
 
 
-def visualize_cluster_formations(cluster_examples, unique_clusters): #eep
+def visualize_cluster_formations(cluster_examples, unique_clusters, folder: str = "analysis/visualisation"): #eep
     """
     Visualize example formations from each cluster to manually identify patterns
     """
@@ -2534,7 +2537,8 @@ def visualize_cluster_formations(cluster_examples, unique_clusters): #eep
             ax.set_ylim(np.min(positions[:, 1])-5, np.max(positions[:, 1])+5)
     
     plt.tight_layout()
-    plt.savefig('cluster_formation_examples.png', dpi=150, bbox_inches='tight')
+    os.makedirs(folder, exist_ok=True)
+    plt.savefig(f'{folder}/cluster_formation_examples.png', dpi=150, bbox_inches='tight')
     plt.show()
 
 def analyze_feature_importance_difference(feature_matrix, feature_names, 
@@ -2777,7 +2781,7 @@ def simplify_feature_name(feature_name): #used
     return name_mapping.get(feature_name, feature_name.replace('_', ' ').title())
 
 
-def visualize_cluster_prototypes(prototypes, cluster_names, feature_names, feature_type=""): #used
+def visualize_cluster_prototypes(prototypes, cluster_names, feature_names, feature_type="", folder: str = "analysis/visualisation"): #used
     """
     Visualize cluster prototypes as radar charts and heatmaps
     """
@@ -2822,7 +2826,8 @@ def visualize_cluster_prototypes(prototypes, cluster_names, feature_names, featu
     ax.set_title('Feature Discriminative Power')
     
     plt.tight_layout()
-    plt.savefig(f'{feature_type}_cluster_prototypes.png', dpi=150, bbox_inches='tight')
+    os.makedirs(folder, exist_ok=True)
+    plt.savefig(f'{folder}/{feature_type}_cluster_prototypes.png', dpi=150, bbox_inches='tight')
     plt.show()
 
 def create_prototype_comparison_table(prototypes, cluster_names, feature_names): #used
@@ -2856,7 +2861,7 @@ def create_prototype_comparison_table(prototypes, cluster_names, feature_names):
     return df
 
 
-def analyze_cluster_relationships(prototype_matrix, cluster_names, feature_type=""): #used
+def analyze_cluster_relationships(prototype_matrix, cluster_names, feature_type="", folder: str = "analysis/visualisation"): #used
     """
     Analyze relationships and similarities between clusters
     """
@@ -2874,7 +2879,8 @@ def analyze_cluster_relationships(prototype_matrix, cluster_names, feature_type=
     plt.title(f'{feature_type.title()} Cluster Relationship Dendrogram')
     plt.ylabel('Distance')
     plt.tight_layout()
-    plt.savefig(f'{feature_type}_cluster_relationships.png', dpi=150, bbox_inches='tight')
+    os.makedirs(folder, exist_ok=True)
+    plt.savefig(f'{folder}/{feature_type}_cluster_relationships.png', dpi=150, bbox_inches='tight')
     plt.show()
     
     # Find most similar and dissimilar clusters
@@ -2988,7 +2994,7 @@ def generate_advanced_summary_report(results, feature_type='combined'): #used
 
 # Example usage function
 def run_complete_advanced_analysis(clustering_results, metadata, layer='layer_-1', feature_type='combined', full_results=None,
-                                            folder="analysis",
+                                            folder="analysis/interpretation",
                                               save_path="cluster_deep_dive.txt"): #used
     """
     Example function showing how to run the complete advanced analysis pipeline
@@ -3321,7 +3327,8 @@ class TacticalExplainabilityLayer:
                                 layer: str = 'layer_-1',
                                 head: int = 0,
                                 max_samples: int = 5,
-                                cluster_average: bool = False) -> None: #used
+                                cluster_average: bool = False,
+                                folder: str = "analysis/visualisation") -> None: #used
         """
         Visualize attention patterns for a specific cluster
         
@@ -3399,7 +3406,8 @@ class TacticalExplainabilityLayer:
             axes[1].set_ylabel('Attention Weight')
             
             plt.tight_layout()
-            plt.savefig(f'attention_patterns_cluster_{cluster_id}_average.png', dpi=150, bbox_inches='tight')
+            os.makedirs(folder, exist_ok=True) 
+            plt.savefig(f'{folder}/attention_patterns_cluster_{cluster_id}_average.png', dpi=150, bbox_inches='tight')
             plt.show()
             
             # Print summary statistics
@@ -3437,7 +3445,8 @@ class TacticalExplainabilityLayer:
                     axes[1, i].set_ylabel('Attention Weight')
             
             plt.tight_layout()
-            plt.savefig(f'attention_patterns_cluster_{cluster_id}_samples.png', dpi=150, bbox_inches='tight')
+            os.makedirs(folder, exist_ok=True)
+            plt.savefig(f'{folder}/attention_patterns_cluster_{cluster_id}_samples.png', dpi=150, bbox_inches='tight')
             plt.show()
     
     
@@ -3459,7 +3468,8 @@ class TacticalExplainabilityLayer:
         return attention
     
     def analyze_embedding_trajectories(self, cluster_labels: np.ndarray, 
-                                     method: str = 'pca') -> Dict[str, Any]: #eep
+                                     method: str = 'pca',
+                                     folder: str = "analysis/visualisation") -> Dict[str, Any]: #eep
         """
         Analyze how embeddings evolve across different layers
         """
@@ -3523,7 +3533,8 @@ class TacticalExplainabilityLayer:
             axes[i].legend()
         
         plt.tight_layout()
-        plt.savefig(f'embedding_trajectories_{method}.png', dpi=150, bbox_inches='tight')
+        os.makedirs(folder, exist_ok=True)
+        plt.savefig(f'{folder}/embedding_trajectories_{method}.png', dpi=150, bbox_inches='tight')
         plt.show()
         
         # Compute trajectory metrics
