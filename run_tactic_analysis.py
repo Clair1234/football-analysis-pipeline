@@ -12,6 +12,8 @@ from .utils import analyze_embedded_clusters_with_positional_data_enhanced
 from .utils import run_complete_advanced_analysis  
 from .utils import TacticalExplainabilityLayer  
 
+EXTRACT_PER_TEAM=True
+
 # 0
 print("0. Setting up data and model...")
 # Run the complete inference pipeline
@@ -43,28 +45,31 @@ analyzer = TacticalPatternAnalyzer(analysis_data)
 print("3. Performing multi-dimensional clustering...")
 clustering_results = analyzer.perform_clustering(
     layer='layer_-1',  # Use final layer embeddings
-    feature_types=['hybrid', 'combined', 'positional', 'per_agent']
+    feature_types=['hybrid', 'combined', 'positional', 'per_agent'],
+    extract_per_team=EXTRACT_PER_TEAM
 )
 
 #4
 print("4. Analyse the embedded clusters...")
 results_embeddings = analyze_embedded_clusters_with_positional_data_enhanced(
      clustering_results, analyzer.metadata, 
-     feature_type='combined', team_ids=[0,0,0,0,0,0,0,0,0,0,0,2] #team_ids=[0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,2]
+     feature_type='combined', team_ids=[0,0,0,0,0,0,0,0,0,0,0,2], #team_ids=[0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,2]
+     extract_per_team=EXTRACT_PER_TEAM
 )
 
 #5
 print("5. Analyse the hybrid embedded clusters...")
 results_embeddings = analyze_embedded_clusters_with_positional_data_enhanced(
      clustering_results, analyzer.metadata, 
-     feature_type='hybrid', team_ids=[0,0,0,0,0,0,0,0,0,0,0,2] #team_ids=[0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,2]
+     feature_type='hybrid', team_ids=[0,0,0,0,0,0,0,0,0,0,0,2], #team_ids=[0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,2]
+     extract_per_team=EXTRACT_PER_TEAM
 )
 
 #6
 print("6. Cluster interpretation")
 # Test different feature_type
-advanced_results = run_complete_advanced_analysis(clustering_results, analyzer.metadata, layer='layer_-1', feature_type='combined')
-advanced_results = run_complete_advanced_analysis(clustering_results, analyzer.metadata, layer='layer_-1', feature_type='hybrid')
+advanced_results = run_complete_advanced_analysis(clustering_results, analyzer.metadata, layer='layer_-1', feature_type='combined', extract_per_team=EXTRACT_PER_TEAM)
+advanced_results = run_complete_advanced_analysis(clustering_results, analyzer.metadata, layer='layer_-1', feature_type='hybrid', extract_per_team=EXTRACT_PER_TEAM)
 
 #7
 print("7. Initializing explainability layer...")

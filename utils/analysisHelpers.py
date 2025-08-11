@@ -45,7 +45,8 @@ class TacticalPatternAnalyzer:
         self.clustering_results = {}
         self.tactical_patterns = {}
 
-    def prepare_clustering_features(self, layer='layer_-1', feature_type='per_agent', hybrid_weights={'embedding': 0.7, 'spatial': 0.3}): #used
+    #chec
+    def prepare_clustering_features(self, layer='layer_-1', feature_type='per_agent', hybrid_weights={'embedding': 0.7, 'spatial': 0.3}, extract_per_team:bool=True): #used
         """ 
         Prepare different types of features for clustering.
 
@@ -97,12 +98,13 @@ class TacticalPatternAnalyzer:
         
         elif feature_type == 'hybrid':
             combined_embeddings = embeddings.reshape(N, -1).numpy()
-            hybrid_features = self._create_hybrid_features(combined_embeddings, metadata, hybrid_weights)
+            hybrid_features = self._create_hybrid_features(combined_embeddings, metadata, hybrid_weights, extract_per_team=extract_per_team)
             return hybrid_features, "Hybrid Combined Embeddings and Positional"
 
         else:
             raise ValueError(f"Unknown feature_type: {feature_type}")
-        
+    
+    #chec   
     def _create_hybrid_features(self, embedding_features, metadata, feature_weights,extract_per_team:bool=True): #used
         """Create hybrid feature representations"""
         # Check parameters
@@ -349,8 +351,8 @@ class TacticalPatternAnalyzer:
             return optimal_k, silhouette
         else:
             return 3
-    
-    def perform_clustering(self, layer='layer_-1', feature_types=['combined', 'per_agent']): #used
+    #chec
+    def perform_clustering(self, layer='layer_-1', feature_types=['combined', 'per_agent'], extract_per_team:bool=True): #used
         """
         Perform clustering with multiple algorithms and feature types
         """
@@ -360,7 +362,7 @@ class TacticalPatternAnalyzer:
             print(f"\n=== Clustering with {feature_type} features ===")
             
             # Prepare features
-            features, feature_name = self.prepare_clustering_features(layer, feature_type)
+            features, feature_name = self.prepare_clustering_features(layer, feature_type, extract_per_team=extract_per_team)
             
             if len(features) < 4:
                 print(f"Skipping {feature_type} - insufficient data")
@@ -707,8 +709,10 @@ def generate_tactical_report(analyzer, folder='analysis/interpretation', save_pa
         
     return report_text
 
+#chec
 def analyze_embedded_clusters_with_positional_data_new(clustering_results, metadata, layer='layer_-1', 
-                                                   feature_type='combined', algorithm='kmeans', team_ids=None, all_features=None): #used
+                                                   feature_type='combined', algorithm='kmeans', team_ids=None, 
+                                                   all_features=None, extract_per_team:bool=True): #used
     """
     Analyze embedded clusters by examining similarities in underlying positional raw data.
     
@@ -730,7 +734,7 @@ def analyze_embedded_clusters_with_positional_data_new(clustering_results, metad
     
     # If no team_ids provided, run original analysis
     if team_ids is None:
-        return _analyze_single_team(clustering_results, metadata, layer, feature_type, algorithm, None, "Full Team")
+        return _analyze_single_team(clustering_results, metadata, layer, feature_type, algorithm, None, "Full Team", extract_per_team=extract_per_team)
     
     # Validate team_ids
     team_ids = np.array(team_ids)
@@ -747,7 +751,7 @@ def analyze_embedded_clusters_with_positional_data_new(clustering_results, metad
     print("\n" + "="*80)
     print("ANALYZING FULL DATASET (ALL TEAMS)")
     print("="*80)
-    results['full'] = _analyze_single_team(clustering_results, metadata, layer, feature_type, algorithm, None, "Full Dataset")
+    results['full'] = _analyze_single_team(clustering_results, metadata, layer, feature_type, algorithm, None, "Full Dataset", extract_per_team=extract_per_team)
     
     # Team-specific analyses
     for team_id in player_teams:
@@ -760,12 +764,12 @@ def analyze_embedded_clusters_with_positional_data_new(clustering_results, metad
         
         results[f'team_{team_id}'] = _analyze_single_team(
             clustering_results, metadata, layer, feature_type, algorithm, 
-            team_player_indices, f"Team {team_id}"
+            team_player_indices, f"Team {team_id}", extract_per_team=extract_per_team
         )
     
     return results
 
-
+#chec
 def _analyze_single_team(clustering_results, metadata, layer, feature_type, algorithm, 
                         team_player_indices, team_name, extract_per_team:bool=True): #used
     """
@@ -1799,7 +1803,7 @@ def extract_sequence_patterns(positions): #used
     
     return features
 
-
+#chec
 def compare_embeddings_vs_raw_clustering(clustering_results, metadata, layer='layer_-1', feature_type='combined',all_features=None, extract_per_team:bool=True): #used
     """
     Compare clustering results between embeddings and raw positional data
@@ -2277,6 +2281,7 @@ def _extract_predictive_patterns(positions, movement_vectors): #used
     return features
 # END SEQUENCE DATA
 
+#chec
 def analyze_cluster_differences_manual(clustering_results, metadata, layer='layer_-1', 
                                      feature_type='combined', algorithm='kmeans', 
                                      team_ids=None, sample_indices=None, transformer_features=None,
@@ -2488,10 +2493,11 @@ def analyze_feature_importance_difference(feature_matrix, feature_names,
             print(f"{fname:<30} {diff:>6.3f} {embed_imp:>6.3f} {raw_imp:>6.3f}")
 
 
-# Update the main analysis function to use new features
+# Update the main analysis function to use new features - chec
 def analyze_embedded_clusters_with_positional_data_enhanced(clustering_results, metadata, 
                                                           layer='layer_-1', feature_type='combined', 
-                                                          algorithm='kmeans', team_ids=None): #used
+                                                          algorithm='kmeans', team_ids=None,
+                                                          extract_per_team:bool=True): #used
     """
     Enhanced version that uses transformer-relevant features
     """
@@ -2503,7 +2509,8 @@ def analyze_embedded_clusters_with_positional_data_enhanced(clustering_results, 
                                                                             metadata=metadata, 
                                                                             layer=layer,
                                                                             feature_type=feature_type,
-                                                                            all_features=None)
+                                                                            all_features=None,
+                                                                        extract_per_team=extract_per_team)
     
     # Then run manual inspection
     print("\nStep 2: Manual cluster inspection...")
@@ -2513,14 +2520,15 @@ def analyze_embedded_clusters_with_positional_data_enhanced(clustering_results, 
                                                              feature_type, 
                                                              algorithm, 
                                                              team_ids, 
-                                                             transformer_features=all_features)
+                                                             transformer_features=all_features,
+                                                             extract_per_team=extract_per_team)
     
     # Finally run the original analysis with enhanced features
     print("\nStep 3: Running enhanced statistical analysis...")
     
     try:
         statistical_results = analyze_embedded_clusters_with_positional_data_new(
-            clustering_results, metadata, layer, feature_type, algorithm, team_ids)
+            clustering_results, metadata, layer, feature_type, algorithm, team_ids, extract_per_team=extract_per_team)
     except Exception as e:
         print(f"WARNING: {e}")
         
@@ -2531,7 +2539,7 @@ def analyze_embedded_clusters_with_positional_data_enhanced(clustering_results, 
         'statistical_analysis': statistical_results
     }
     
-    
+#chec
 def compute_cluster_prototypes(clustering_results, metadata, layer='layer_-1', 
                              feature_type='combined', algorithm='kmeans', spatial_features=None, extract_per_team:bool=True): #used
     """
@@ -2808,8 +2816,8 @@ def analyze_cluster_relationships(prototype_matrix, cluster_names, feature_type=
         'all_similarities': similarities
     }
 
-
-def advanced_cluster_interpretation(clustering_results, metadata, layer='layer_-1', feature_type='combined'): #used
+#chec
+def advanced_cluster_interpretation(clustering_results, metadata, layer='layer_-1', feature_type='combined',extract_per_team:bool=True): #used
     """
     Master function that runs all advanced clustering analyses
     """
@@ -2835,7 +2843,8 @@ def advanced_cluster_interpretation(clustering_results, metadata, layer='layer_-
         prototype_results = compute_cluster_prototypes(clustering_results=clustering_results, 
                                                        metadata=metadata, 
                                                        layer=layer, 
-                                                       feature_type=feature_type)
+                                                       feature_type=feature_type,
+                                                       extract_per_team=extract_per_team)
         results['prototypes'] = prototype_results
         print("Prototype analysis completed")
         
@@ -2894,10 +2903,11 @@ def generate_advanced_summary_report(results, feature_type='combined'): #used
     return "\n".join(report)
 
 
-# Example usage function
+# Example usage function -chec
 def run_complete_advanced_analysis(clustering_results, metadata, layer='layer_-1', feature_type='combined', full_results=None,
                                             folder="analysis/interpretation",
-                                              save_path="cluster_deep_dive.txt"): #used
+                                              save_path="cluster_deep_dive.txt",
+                                              extract_per_team:bool=True): #used
     """
     Example function showing how to run the complete advanced analysis pipeline
     """
@@ -2907,7 +2917,8 @@ def run_complete_advanced_analysis(clustering_results, metadata, layer='layer_-1
     results = advanced_cluster_interpretation(clustering_results=clustering_results, 
                                               metadata=metadata, 
                                               layer=layer,
-                                              feature_type=feature_type)
+                                              feature_type=feature_type,
+                                              extract_per_team=extract_per_team)
 
     report = []
 
