@@ -1414,7 +1414,8 @@ class SoccerTrainer:
 
 
     def analyze_tactical_patterns_post_training(self, dataloader: DataLoader,
-                                            save_analysis: bool = True):
+                                            save_analysis: bool = True,
+                                            extract_per_team: bool = True):
         """
         Comprehensive post-training analysis for tactical pattern discovery
         
@@ -1429,7 +1430,8 @@ class SoccerTrainer:
         
         for layer_idx in [-3, -2, -1]:  # Last 3 layers
             embeddings, metadata, seq_ids = self.collect_embeddings_for_clustering(
-                dataloader, layer_idx=layer_idx, max_samples=1000 #samples
+                dataloader, layer_idx=layer_idx, max_samples=1000, #samples
+                extract_per_team=extract_per_team
             )
             layer_embeddings[f'layer_{layer_idx}'] = embeddings
             layer_metadata[f'layer_{layer_idx}'] = metadata

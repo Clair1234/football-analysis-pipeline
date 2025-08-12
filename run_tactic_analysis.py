@@ -40,7 +40,7 @@ trainer.visualize_attention(vis_loader, num_samples=1)
 #1
 print("1. Extracting embeddings and patterns from trained model...")
 analysis_data = trainer.analyze_tactical_patterns_post_training(
-    vis_loader, save_analysis=True
+    vis_loader, save_analysis=True, extract_per_team=EXTRACT_PER_TEAM
 )
 
 #2
