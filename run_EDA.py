@@ -255,7 +255,6 @@ def compute_velocity_distribution(df, plot_title, filename):
     plt.close()
         
 if __name__ == "__main__":
-    folder = "tracking_data"
     folder = "./data/processed"
     data = collect_data(folder)
 

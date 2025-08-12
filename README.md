@@ -34,7 +34,7 @@ Sports analytics, Machine learning, Data science, Behavioural analysis,  Tactica
 		- Seaborn
 
 ## Demonstration workflow
-### Running the code
+### Overall workflow
 	- Data Preparation:
 	
 	Load football match data in Parquet or CSV format
@@ -78,6 +78,83 @@ Sports analytics, Machine learning, Data science, Behavioural analysis,  Tactica
 	Generate either field-level or team-level analysis
 	
 	Evaluate dimension impact
+
+### Run
+Those are example of application of code.
+
+### Collect data - run_data_collection.py
+```
+python run_data_collection.py
+
+```
+or there are parameters to collect specific data, policy helps pick a particular policy (all, random, aggresive, defensive, passer, possession, counter), random will always be included, it is the basic GRF action manager. Default is 'random'. The frames parameter is responsible for the number of frames in a match, a frame is 0.1s, default is 5000. The round parameter counts the number of rounds of simulation per policy, default is 100. The parameter output_dir is responsible for where the data is stored once simulated, default is './data/raw'.
+```
+python run_data_collection.py --policy 'all' --frames 5000 --round 5 --output_dir './data/raw'
+
+```
+
+### Enhance data - run_data_enhancement.py
+In main function, change the following line to where the data is stored. The output will be in './data/processed'. 
+```
+path = './data/raw/' 
+```
+the run:
+```
+python run_data_enhancement.py
+
+```
+
+### Run EDA - run_EDA.py
+In main function, change the following line to where the data is stored. The output will be in './analysis/EDA/'.
+```
+path = './data/raw/' 
+```
+the run:
+```
+python run_EDA.py
+
+```
+
+### Split into training and testing - run_data_split.py
+You can change those parameters in the config at the top:
+```
+# --- Config ---
+source_folder = "./data/processed"
+train_folder = "./data/processed/training"
+test_folder = "./data/processed/testing"
+train_ratio = 0.8  # 80% for training, 20% for testing
+seed = 42  # for reproducibility
+```
+then run:
+```
+python run_data_split.py
+
+```
+
+### Train a model - run_train_model.py
+The parameter `FROM_SCRATCH` is in charge of either creating a new architecture (if True) or loading a model (else). Pick architecture dimension and adapt data folder on line 76:
+```
+# Collect files available
+files = glob.glob('./training/*.parquet')
+```
+then run:
+```
+python run_train_model.py
+```
+
+### Test a model - run_test_model.py
+In main, adapt `model_path` and `data_path` then run:
+```
+python run_test_model.py
+
+```
+
+### Run analysis - run_tactical_analysis.py
+In main, adapt `model_path` and `data_path` then run:
+```
+python run_tactical_analysis.py
+
+```
 
 ### Accessing outputs
 There are two types of outputs that are located in the analysis folder:
