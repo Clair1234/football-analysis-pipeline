@@ -1,0 +1,129 @@
+=== MANUAL CLUSTER DIFFERENCE ANALYSIS ===
+Found 8 clusters for hybrid
+
+============================================================
+CLUSTER 0 - 250 samples
+============================================================
+Top distinguishing features (vs other clusters):
+
+  1. movement_coherence_w10: higher (z=0.91)
+
+  2. pairwise_distance_std: higher (z=0.89)
+
+  3. movement_coherence_w5: higher (z=0.87)
+
+  4. movement_coherence_w3: higher (z=0.86)
+
+  5. movement_coherence_w1: higher (z=0.84)
+
+
+============================================================
+CLUSTER 1 - 250 samples
+============================================================
+Top distinguishing features (vs other clusters):
+
+  1. movement_coherence_w10: higher (z=0.91)
+
+  2. pairwise_distance_std: higher (z=0.89)
+
+  3. movement_coherence_w5: higher (z=0.87)
+
+  4. movement_coherence_w3: higher (z=0.86)
+
+  5. movement_coherence_w1: higher (z=0.84)
+
+
+============================================================
+CLUSTER 2 - 250 samples
+============================================================
+Top distinguishing features (vs other clusters):
+
+  1. movement_coherence_w10: lower (z=-0.90)
+
+  2. movement_coherence_w5: lower (z=-0.87)
+
+  3. pairwise_distance_std: lower (z=-0.86)
+
+  4. movement_coherence_w3: lower (z=-0.86)
+
+  5. movement_coherence_w1: lower (z=-0.84)
+
+
+============================================================
+CLUSTER 3 - 250 samples
+============================================================
+Top distinguishing features (vs other clusters):
+
+  1. movement_coherence_w10: higher (z=0.91)
+
+  2. pairwise_distance_std: higher (z=0.89)
+
+  3. movement_coherence_w5: higher (z=0.87)
+
+  4. movement_coherence_w3: higher (z=0.86)
+
+  5. movement_coherence_w1: higher (z=0.84)
+
+
+============================================================
+CLUSTER 4 - 250 samples
+============================================================
+Top distinguishing features (vs other clusters):
+
+  1. movement_coherence_w10: higher (z=0.91)
+
+  2. pairwise_distance_std: higher (z=0.88)
+
+  3. movement_coherence_w5: higher (z=0.87)
+
+  4. movement_coherence_w3: higher (z=0.86)
+
+  5. movement_coherence_w1: higher (z=0.84)
+
+
+============================================================
+CLUSTER 5 - 250 samples
+============================================================
+Top distinguishing features (vs other clusters):
+
+  1. movement_coherence_w10: lower (z=-0.90)
+
+  2. movement_coherence_w5: lower (z=-0.87)
+
+  3. pairwise_distance_std: lower (z=-0.86)
+
+  4. movement_coherence_w3: lower (z=-0.86)
+
+  5. movement_coherence_w1: lower (z=-0.84)
+
+
+============================================================
+CLUSTER 6 - 250 samples
+============================================================
+Top distinguishing features (vs other clusters):
+
+  1. movement_coherence_w10: lower (z=-0.91)
+
+  2. movement_coherence_w5: lower (z=-0.87)
+
+  3. pairwise_distance_std: lower (z=-0.86)
+
+  4. movement_coherence_w3: lower (z=-0.86)
+
+  5. movement_coherence_w1: lower (z=-0.84)
+
+
+============================================================
+CLUSTER 7 - 250 samples
+============================================================
+Top distinguishing features (vs other clusters):
+
+  1. movement_coherence_w10: lower (z=-0.90)
+
+  2. movement_coherence_w5: lower (z=-0.87)
+
+  3. pairwise_distance_std: lower (z=-0.86)
+
+  4. movement_coherence_w3: lower (z=-0.86)
+
+  5. movement_coherence_w1: lower (z=-0.84)

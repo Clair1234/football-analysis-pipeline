@@ -1,0 +1,19 @@
+ADVANCED CLUSTERING ANALYSIS SUMMARY
+==================================================
+
+2. CLUSTER PROTOTYPES
+   - Number of interpretable clusters: 8
+   - Cluster characteristics:
+     * Cluster 0: Low L-R Balance + High Max Y Gap: 250 samples
+     * Cluster 1: Low L-R Balance + High Total Movement: 250 samples
+     * Cluster 2: High F-B Balance + Low Total Movement: 250 samples
+     * Cluster 3: High Vertical Balance + High Velocity Mean: 250 samples
+     * Cluster 4: Low Wide Players + Low Future Past Correlation: 250 samples
+     * Cluster 5: Low Vertical Balance + Low Density Q4: 250 samples
+     * Cluster 6: High L-R Balance + High Wide Players: 250 samples
+     * Cluster 7: High Future Past Correlation + Low Total Movement: 250 samples
+============================================================
+CLUSTER DEEP DIVE ANALYSIS
+============================================================
+Most compact formation cluster: 5
+Most spread formation cluster: 4
