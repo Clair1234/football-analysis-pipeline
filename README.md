@@ -14,10 +14,14 @@ Sports analytics, Machine learning, Data science, Behavioural analysis,  Tactica
 
 ## Required resources
 ### Hardware requirements
-**Memory:** Minimum 16GB RAM recommended for large dataset processing \\
-**GPU:**  CUDA-compatible GPU recommended for transformer model training \\
-**Storage:** Sufficient space for Parquet/CSV files and model checkpoints \\
-**Processing:** Multi-core CPU for data preprocessing and clustering analysis \\
+**Memory:** Minimum 16GB RAM recommended for large dataset processing 
+
+**GPU:**  CUDA-compatible GPU recommended for transformer model training 
+
+**Storage:** Sufficient space for Parquet/CSV files and model checkpoints 
+
+**Processing:** Multi-core CPU for data preprocessing and clustering analysis 
+
 
 ### Software dependencies
 	- Python 3.8+
