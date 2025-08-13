@@ -252,12 +252,12 @@ def main_inference_pipeline(): #need to fix that
     """
     
     # 1. Load the trained model
-    model_path = "/kaggle/input/football_transformer/pytorch/default/2/best_soccer_model.pth"
+    model_path = "models/best_soccer_model.pth"
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
     model = load_trained_model(model_path, device)
     
     # 2. Setup inference data (same as training)
-    data_path = '/kaggle/input/football-matches/testing/testing'  
+    data_path = 'data/processed/testing'  
     dataset = setup_inference_data(data_path, seq_len=100, max_files=15)
     
     # 3. Run inference on all sequences

@@ -1414,8 +1414,8 @@ class SoccerTrainer:
 
 
     def analyze_tactical_patterns_post_training(self, dataloader: DataLoader,
-                                            save_analysis: bool = True,
-                                            extract_per_team: bool = True):
+                                               save_analysis: bool = True,
+                                               extract_per_team:bool=True):
         """
         Comprehensive post-training analysis for tactical pattern discovery
         
@@ -1471,8 +1471,9 @@ class SoccerTrainer:
         }
         
         if save_analysis:
-            torch.save(analysis_data, 'tactical_analysis_data.pt')
-            print("Analysis data saved to 'tactical_analysis_data.pt'")
+            os.makedirs("analysis", exist_ok=True)
+            torch.save(analysis_data, 'analysis/tactical_analysis_data.pt')
+            print("Analysis data saved to 'analysis/tactical_analysis_data.pt'")
         
         return analysis_data
 

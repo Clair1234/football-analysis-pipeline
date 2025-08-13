@@ -85,7 +85,6 @@ explainer = TacticalExplainabilityLayer(
     device='cuda' if torch.cuda.is_available() else 'cpu'
 )
 
-
 #8
 print("8. Performing explainability analysis...")
 preferred_clustering = clustering_results['combined']['clustering']['kmeans']
