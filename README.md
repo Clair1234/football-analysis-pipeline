@@ -12,6 +12,9 @@ Football analytics, Transformer models, Tactical analysis, Player positioning, C
 ### Subject areas
 Sports analytics, Machine learning, Data science, Behavioural analysis,  Tactical intelligence.
 
+### Easy test
+A Kaggle notebook is set up with an example of run [here](https://www.kaggle.com/code/clair01234/football-analysis-pipeline).
+
 ## Required resources
 ### Hardware requirements
 **Memory:** Minimum 16GB RAM recommended for large dataset processing 
@@ -177,8 +180,6 @@ z-score analysis for cluster discrimination,
 silhouette scores for clustering quality
 
 ## Code structure
-### Main directory structure
-
 
 ### Data files
 **Input Formats:** CSV and Parquet files containing player positional data.
